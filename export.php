@@ -1,6 +1,7 @@
 <?php
-function exportDatabase($host, $username, $password, $database, $exportPath) {
+// Set allow_scripts_to_close_windows to true in  about:config
 
+function exportDatabase($host, $username, $password, $database, $exportPath) {
     // Connect to the database
     $mysqli = new mysqli($host, $username, $password, $database);
     $mysqli->select_db($database);
@@ -47,7 +48,7 @@ function exportDatabase($host, $username, $password, $database, $exportPath) {
         $result = $mysqli->query('SELECT * FROM ' . $tableName);
         while ($row = $result->fetch_assoc()) {
             $insertStatement = 'INSERT INTO ' . $tableName . ' VALUES (';
-            $values = array_map(function($value) use ($mysqli) {
+            $values = array_map(function ($value) use ($mysqli) {
                 return "'" . $mysqli->real_escape_string($value) . "'";
             }, $row);
             $insertStatement .= implode(', ', $values) . ");\n";
@@ -61,7 +62,73 @@ function exportDatabase($host, $username, $password, $database, $exportPath) {
     fclose($file);
     $mysqli->close();
 
-    echo 'Database exported successfully!';
+    // Output the prettier HTML
+    echo '<html>
+              <head>
+                  <title>Database Exported</title>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          background-color: #f7f7f7;
+                          margin: 0;
+                          padding: 0;
+                      }
+                      .container {
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          height: 100vh;
+                      }
+                      .message {
+                          text-align: center;
+                          padding: 30px;
+                          background-color: #fff;
+                          border-radius: 10px;
+                          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                      }
+                      h1 {
+                          font-size: 24px;
+                          margin: 0;
+                          padding-bottom: 10px;
+                          color: #333;
+                      }
+                      p {
+                          font-size: 16px;
+                          margin: 0;
+                          color: #777;
+                      }
+                      .buttons {
+                          margin-top: 20px;
+                      }
+                      .button {
+                          display: inline-block;
+                          padding: 10px 20px;
+                          font-size: 16px;
+                          font-weight: bold;
+                          text-decoration: none;
+                          background-color: #3490dc;
+                          color: #fff;
+                          border-radius: 4px;
+                          transition: background-color 0.3s;
+                      }
+                      .button:hover {
+                          background-color: #2779bd;
+                      }
+                  </style>
+              </head>
+              <body>
+                  <div class="container">
+                      <div class="message">
+                          <h1>Database Exported Successfully!</h1>
+                          <p>The SQL file has been Exported into a SQL file..</p>
+                          <div class="buttons">
+                              <a href="http://localhost" class="button">Return to localhost</a>
+                              <button class="button" onclick="window.close()">Close Tab</button>
+                          </div>
+                      </div>
+                  </div>
+              </body>
+          </html>';
 }
 
 // Usage
@@ -69,7 +136,7 @@ $host = 'localhost';
 $username = 'root';
 $password = 'mysql';
 $database = 'database';
-$exportPath = 'C:/Users/kevin/Desktop/database.sql';
+$exportPath = 'C:/Users/user/Desktop/database.sql';
 
 exportDatabase($host, $username, $password, $database, $exportPath);
 ?>
