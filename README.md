@@ -65,4 +65,3 @@ To use the script, follow these steps:
 After making the necessary modifications, save the file and run it in your PHP environment.
 
 The script will display a loading screen with a progress bar as it imports the SQL file into the specified database. Once the import is completed, a success message will be shown, and you will have the option to return to localhost or close the tab.
-
